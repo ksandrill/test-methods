@@ -11,7 +11,7 @@ class AddCustomerPage extends React.Component {
             firstName: '',
             lastName: '',
             login: '',
-            password: ''
+            pass: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -33,7 +33,7 @@ class AddCustomerPage extends React.Component {
 
         dispatch(adminActions.createCustomer(
             this.state.login,
-            this.state.password,
+            this.state.pass,
             this.state.firstName,
             this.state.lastName));
     }
@@ -65,7 +65,7 @@ class AddCustomerPage extends React.Component {
 
                 <FormGroup>
                     <FormLabel>Password</FormLabel>
-                    <FormControl type="text" name="password" value={this.state.password} onChange={this.handleChange} />
+                    <FormControl type="text" name="pass" value={this.state.pass} onChange={this.handleChange} />
                 </FormGroup>
 
                 <ButtonToolbar aria-label="Toolbar with button groups">

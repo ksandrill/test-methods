@@ -52,11 +52,11 @@ function getCustomers() {
     function failure(error) { return { type: GET_CUSTOMERS_FAILURE, error } }
 }
 
-function createCustomer(username, password, firstName, lastName) {
+function createCustomer(username, pass, firstName, lastName) {
     return dispatch => {
         dispatch(request());
 
-        apiService.createCustomer(username, password, firstName, lastName)
+        apiService.createCustomer(username, pass, firstName, lastName)
             .then(
                 createdCustomer => {
                     dispatch(success(createdCustomer));

@@ -56,7 +56,7 @@ function getCustomers() {
     return fetch(`${config.apiUrl}/customers`, requestOptions).then(handleResponse);
 }
 
-function createCustomer(login, password, firstName, lastName) {
+function createCustomer(login, pass, firstName, lastName) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -64,7 +64,7 @@ function createCustomer(login, password, firstName, lastName) {
             "first_name": firstName,
             "last_name": lastName,
             "login": login,
-            "password": password
+            "pass": pass
         })
     };
 

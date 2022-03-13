@@ -8,13 +8,14 @@ CREATE DATABASE testmethods;
 USE testmethods;
 
 # Step 3: Create tables
-CREATE TABLE `CUSTOMER` (
-	`id` TEXT NOT NULL,
-	`first_name` TEXT NOT NULL,
-	`last_name` TEXT NOT NULL,
-	`login` TEXT NOT NULL,
-	`pass` TEXT NOT NULL,
-	`balance` INT(11) NOT NULL DEFAULT '0'
+create table `customer` (
+    `id` binary(16) primary key,
+    `first_name` varchar(64) NOT NULL,
+    `last_name` varchar(64) NOT NULL,
+    `login` varchar(64) NOT NULL,
+    `pass` varchar(64) NOT NULL,
+    `balance` int(11) NOT NULL DEFAULT '0',
+    `version` int(11) NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE `PLAN` (
