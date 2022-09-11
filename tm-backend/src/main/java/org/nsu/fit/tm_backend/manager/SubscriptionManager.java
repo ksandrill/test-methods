@@ -1,9 +1,9 @@
 package org.nsu.fit.tm_backend.manager;
 
 import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.database.IDBService;
-import org.nsu.fit.tm_backend.database.data.PlanPojo;
-import org.nsu.fit.tm_backend.database.data.SubscriptionPojo;
+import org.nsu.fit.tm_backend.repository.IRepository;
+import org.nsu.fit.tm_backend.repository.data.PlanPojo;
+import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SubscriptionManager extends ParentManager {
-    public SubscriptionManager(IDBService dbService, Logger flowLog) {
+    public SubscriptionManager(IRepository dbService, Logger flowLog) {
         super(dbService, flowLog);
     }
 

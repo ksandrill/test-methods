@@ -1,7 +1,7 @@
 package org.nsu.fit.tm_backend.operations;
 
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
-import org.nsu.fit.tm_backend.database.data.SubscriptionPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
 import org.nsu.fit.tm_backend.manager.CustomerManager;
 import org.nsu.fit.tm_backend.manager.SubscriptionManager;
 

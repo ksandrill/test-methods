@@ -1,13 +1,13 @@
 package org.nsu.fit.tm_backend.manager;
 
 import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.database.IDBService;
+import org.nsu.fit.tm_backend.repository.IRepository;
 
 public class ParentManager {
-    protected IDBService dbService;
+    protected IRepository dbService;
     protected Logger log;
 
-    public ParentManager(IDBService dbService, Logger log) {
+    public ParentManager(IRepository dbService, Logger log) {
         this.dbService = dbService;
         this.log = log;
     }

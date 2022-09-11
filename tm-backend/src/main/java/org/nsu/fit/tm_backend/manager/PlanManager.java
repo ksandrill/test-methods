@@ -1,8 +1,8 @@
 package org.nsu.fit.tm_backend.manager;
 
 import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.database.IDBService;
-import org.nsu.fit.tm_backend.database.data.PlanPojo;
+import org.nsu.fit.tm_backend.repository.IRepository;
+import org.nsu.fit.tm_backend.repository.data.PlanPojo;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PlanManager extends ParentManager {
-    public PlanManager(IDBService dbService, Logger flowLog) {
+    public PlanManager(IRepository dbService, Logger flowLog) {
         super(dbService, flowLog);
     }
 

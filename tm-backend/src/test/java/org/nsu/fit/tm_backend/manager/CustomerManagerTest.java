@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.database.IDBService;
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.IRepository;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
 
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 // Лабораторная 2: покрыть юнит тестами класс CustomerManager на 100%.
 class CustomerManagerTest {
     private Logger logger;
-    private IDBService dbService;
+    private IRepository dbService;
     private CustomerManager customerManager;
 
     private CustomerPojo createCustomerInput;
@@ -25,7 +25,7 @@ class CustomerManagerTest {
     @BeforeEach
     void init() {
         // Создаем mock объекты.
-        dbService = mock(IDBService.class);
+        dbService = mock(IRepository.class);
         logger = mock(Logger.class);
 
         // Создаем класс, методы которого будем тестировать,

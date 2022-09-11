@@ -1,4 +1,4 @@
-package org.nsu.fit.tm_backend.database.data;
+package org.nsu.fit.tm_backend.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

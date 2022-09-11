@@ -2,10 +2,10 @@ package org.nsu.fit.tm_backend.manager.auth;
 
 import org.slf4j.Logger;
 import org.nsu.fit.tm_backend.MainFactory;
-import org.nsu.fit.tm_backend.database.IDBService;
-import org.nsu.fit.tm_backend.database.data.AccountTokenPojo;
-import org.nsu.fit.tm_backend.database.data.CredentialsPojo;
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.IRepository;
+import org.nsu.fit.tm_backend.repository.data.AccountTokenPojo;
+import org.nsu.fit.tm_backend.repository.data.CredentialsPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
 import org.nsu.fit.tm_backend.manager.ParentManager;
 import org.nsu.fit.tm_backend.manager.auth.exception.AuthenticationException;
 import org.nsu.fit.tm_backend.manager.auth.exception.AuthenticationTokenRefreshmentException;
@@ -24,7 +24,7 @@ import java.util.UUID;
  * Лабораторная *: Исследуйте данный класс, подумайте какие потенциальные проблемы он содержит.
  */
 public class AuthenticationTokenManager extends ParentManager {
-    public AuthenticationTokenManager(IDBService dbService, Logger flowLog) {
+    public AuthenticationTokenManager(IRepository dbService, Logger flowLog) {
         super(dbService, flowLog);
     }
 

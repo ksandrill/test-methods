@@ -1,14 +1,14 @@
-package org.nsu.fit.tm_backend.database;
+package org.nsu.fit.tm_backend.repository;
 
-import org.nsu.fit.tm_backend.database.data.AccountTokenPojo;
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
-import org.nsu.fit.tm_backend.database.data.PlanPojo;
-import org.nsu.fit.tm_backend.database.data.SubscriptionPojo;
+import org.nsu.fit.tm_backend.repository.data.AccountTokenPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.data.PlanPojo;
+import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface IDBService {
+public interface IRepository {
     CustomerPojo createCustomer(CustomerPojo customerPojo);
 
     void editCustomer(CustomerPojo customerPojo);

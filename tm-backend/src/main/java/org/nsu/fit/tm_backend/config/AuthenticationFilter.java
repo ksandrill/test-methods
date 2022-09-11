@@ -1,4 +1,4 @@
-package org.nsu.fit.tm_backend.rest;
+package org.nsu.fit.tm_backend.config;
 
 import org.nsu.fit.tm_backend.MainFactory;
 import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;

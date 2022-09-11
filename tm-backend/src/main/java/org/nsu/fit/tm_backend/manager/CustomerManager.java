@@ -1,10 +1,10 @@
 package org.nsu.fit.tm_backend.manager;
 
 import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.database.IDBService;
-import org.nsu.fit.tm_backend.database.data.ContactPojo;
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
-import org.nsu.fit.tm_backend.database.data.TopUpBalancePojo;
+import org.nsu.fit.tm_backend.repository.IRepository;
+import org.nsu.fit.tm_backend.repository.data.ContactPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.data.TopUpBalancePojo;
 import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
 import org.nsu.fit.tm_backend.shared.Globals;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CustomerManager extends ParentManager {
-    public CustomerManager(IDBService dbService, Logger flowLog) {
+    public CustomerManager(IRepository dbService, Logger flowLog) {
         super(dbService, flowLog);
     }
 

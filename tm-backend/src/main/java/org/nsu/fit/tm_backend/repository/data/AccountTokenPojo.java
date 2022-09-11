@@ -1,8 +1,7 @@
-package org.nsu.fit.tm_backend.database.data;
+package org.nsu.fit.tm_backend.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.nsu.fit.tm_backend.shared.Authority;
 
 import java.util.Set;
 import java.util.UUID;

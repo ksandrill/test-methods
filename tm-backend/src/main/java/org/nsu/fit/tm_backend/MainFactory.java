@@ -1,14 +1,14 @@
 package org.nsu.fit.tm_backend;
 
 import org.slf4j.LoggerFactory;
-import org.nsu.fit.tm_backend.database.DBService;
+import org.nsu.fit.tm_backend.repository.impl.MemoryRepository;
 import org.nsu.fit.tm_backend.manager.auth.AuthenticationTokenManager;
 import org.nsu.fit.tm_backend.manager.CustomerManager;
 import org.nsu.fit.tm_backend.manager.PlanManager;
 import org.nsu.fit.tm_backend.manager.SubscriptionManager;
 
 public class MainFactory {
-    private static MainFactory instance;
+    private static volatile MainFactory instance;
 
     private final AuthenticationTokenManager authenticationTokenManager;
     private final CustomerManager customerManager;
@@ -16,7 +16,7 @@ public class MainFactory {
     private final SubscriptionManager subscriptionManager;
 
     private MainFactory() {
-        DBService dbService = new DBService(LoggerFactory.getLogger(DBService.class));
+        MemoryRepository dbService = new MemoryRepository(LoggerFactory.getLogger(MemoryRepository.class));
 
         authenticationTokenManager = new AuthenticationTokenManager(dbService, LoggerFactory.getLogger(AuthenticationTokenManager.class));
         customerManager = new CustomerManager(dbService, LoggerFactory.getLogger(CustomerManager.class));
@@ -25,6 +25,10 @@ public class MainFactory {
     }
 
     public static MainFactory getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+
         synchronized (MainFactory.class) {
             if (instance == null) {
                 instance = new MainFactory();

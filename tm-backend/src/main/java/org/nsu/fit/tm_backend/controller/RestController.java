@@ -1,16 +1,16 @@
-package org.nsu.fit.tm_backend.rest;
+package org.nsu.fit.tm_backend.controller;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.nsu.fit.tm_backend.MainFactory;
-import org.nsu.fit.tm_backend.database.DBService;
-import org.nsu.fit.tm_backend.database.data.ContactPojo;
-import org.nsu.fit.tm_backend.database.data.CredentialsPojo;
-import org.nsu.fit.tm_backend.database.data.CustomerPojo;
-import org.nsu.fit.tm_backend.database.data.HealthCheckPojo;
-import org.nsu.fit.tm_backend.database.data.PlanPojo;
-import org.nsu.fit.tm_backend.database.data.SubscriptionPojo;
-import org.nsu.fit.tm_backend.database.data.TopUpBalancePojo;
+import org.nsu.fit.tm_backend.repository.impl.MemoryRepository;
+import org.nsu.fit.tm_backend.repository.data.ContactPojo;
+import org.nsu.fit.tm_backend.repository.data.CredentialsPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.data.HealthCheckPojo;
+import org.nsu.fit.tm_backend.repository.data.PlanPojo;
+import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
+import org.nsu.fit.tm_backend.repository.data.TopUpBalancePojo;
 import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
 import org.nsu.fit.tm_backend.shared.Authority;
 import org.nsu.fit.tm_backend.shared.JsonMapper;
@@ -36,7 +36,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Path("")
-public class RestService {
+public class RestController {
     @POST
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ public class RestService {
     public Response healthCheck() {
         HealthCheckPojo result = new HealthCheckPojo();
         try {
-            new DBService(LoggerFactory.getLogger(DBService.class));
+            new MemoryRepository(LoggerFactory.getLogger(MemoryRepository.class));
             result.dbStatus = "OK";
         } catch (Throwable ex) {
             result.dbStatus = ex.getMessage();

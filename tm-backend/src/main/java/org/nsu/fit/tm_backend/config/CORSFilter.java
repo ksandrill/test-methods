@@ -1,4 +1,4 @@
-package org.nsu.fit.tm_backend.rest;
+package org.nsu.fit.tm_backend.config;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

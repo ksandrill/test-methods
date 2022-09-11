@@ -31,12 +31,12 @@ dependencies {
 
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
 
-    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.27'
-    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.27'
-    compile group: 'org.glassfish.jersey.core', name: 'jersey-common', version: '2.27'
-    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.27'
-    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
-    compile group: 'org.glassfish.jersey.ext.cdi', name: 'jersey-cdi1x', version: '2.27'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-common', version: '2.28'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.28'
+    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'
+    compile group: 'org.glassfish.jersey.ext.cdi', name: 'jersey-cdi1x', version: '2.28'
     compile group: 'javax.enterprise', name: 'cdi-api', version: '1.2'
 
     compile group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
@@ -45,7 +45,7 @@ dependencies {
 
     compile group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
 
-    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+    implementation 'org.mapstruct:mapstruct:1.5.2.Final'
 
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.5.Final'
 
@@ -53,6 +53,11 @@ dependencies {
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.13'
     compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.13'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'

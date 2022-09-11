@@ -10,7 +10,7 @@
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>org.nsu.fit.tm_backend.rest.CustomApplication</param-value>
+            <param-value>org.nsu.fit.tm_backend.CustomApplication</param-value>
         </init-param>
 
         <init-param>
