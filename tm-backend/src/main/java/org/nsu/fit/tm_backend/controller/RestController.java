@@ -1,20 +1,20 @@
 package org.nsu.fit.tm_backend.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.var;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.nsu.fit.tm_backend.MainFactory;
-import org.nsu.fit.tm_backend.repository.impl.MemoryRepository;
 import org.nsu.fit.tm_backend.repository.data.ContactPojo;
 import org.nsu.fit.tm_backend.repository.data.CredentialsPojo;
 import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
-import org.nsu.fit.tm_backend.repository.data.HealthCheckPojo;
+import org.nsu.fit.tm_backend.controller.data.HealthCheckResponse;
 import org.nsu.fit.tm_backend.repository.data.PlanPojo;
 import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
-import org.nsu.fit.tm_backend.repository.data.TopUpBalancePojo;
+import org.nsu.fit.tm_backend.controller.data.TopUpBalanceRequest;
 import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
 import org.nsu.fit.tm_backend.shared.Authority;
 import org.nsu.fit.tm_backend.shared.JsonMapper;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -36,18 +36,16 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Path("")
+@Slf4j
 public class RestController {
     @POST
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
-    public Response authenticate(String credentialsDataJson) {
-        // convert json to object.
-        CredentialsPojo credentialsPojo = JsonMapper.fromJson(credentialsDataJson, CredentialsPojo.class);
-
+    public Response authenticate(CredentialsPojo credentialsData) {
         return Response.ok().entity(JsonMapper.toJson(
-                MainFactory.getInstance().getAuthenticationTokenManager().authenticate(credentialsPojo),
+                MainFactory.getInstance().getAuthenticationTokenManager().authenticate(credentialsData),
                 true)).build();
     }
 
@@ -56,14 +54,11 @@ public class RestController {
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
     public Response healthCheck() {
-        HealthCheckPojo result = new HealthCheckPojo();
-        try {
-            new MemoryRepository(LoggerFactory.getLogger(MemoryRepository.class));
-            result.dbStatus = "OK";
-        } catch (Throwable ex) {
-            result.dbStatus = ex.getMessage();
-        }
-        return Response.ok().entity(JsonMapper.toJson(result, true)).build();
+        var result = HealthCheckResponse.builder()
+            .dbStatus("OK")
+            .status("OK")
+            .build();
+        return Response.ok().entity(result).build();
     }
 
     @GET
@@ -124,6 +119,7 @@ public class RestController {
             // send the answer
             return Response.ok().entity(JsonMapper.toJson(customer, true)).build();
         } catch (IllegalArgumentException ex) {
+            log.error(ex.getMessage(), ex);
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(ex)).build();
         }
     }
@@ -133,9 +129,9 @@ public class RestController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(Authority.ADMIN_ROLE)
-    public Response deleteCustomer(@PathParam("id") String customerId) {
+    public Response deleteCustomer(@PathParam("id") UUID customerId) {
         try {
-            MainFactory.getInstance().getCustomerManager().deleteCustomer(UUID.fromString(customerId));
+            MainFactory.getInstance().getCustomerManager().deleteCustomer(customerId);
 
             // send the answer
             return Response.ok().build();
@@ -149,15 +145,12 @@ public class RestController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed(Authority.CUSTOMER_ROLE)
-    public Response topUpBalance(@Context SecurityContext securityContext, String topUpBalancePojoStr) {
+    public Response topUpBalance(@Context SecurityContext securityContext, TopUpBalanceRequest topUpBalanceRequest) {
         try {
             AuthenticatedUserDetails authenticatedUserDetails = (AuthenticatedUserDetails)securityContext.getUserPrincipal();
 
-            // convert json to object.
-            TopUpBalancePojo topUpBalancePojo = JsonMapper.fromJson(topUpBalancePojoStr, TopUpBalancePojo.class);
-
-            topUpBalancePojo.customerId = UUID.fromString(authenticatedUserDetails.getUserId());
-            MainFactory.getInstance().getCustomerManager().topUpBalance(topUpBalancePojo);
+            var customerId = UUID.fromString(authenticatedUserDetails.getUserId());
+            MainFactory.getInstance().getCustomerManager().topUpBalance(customerId, topUpBalanceRequest.getMoney());
 
             // send the answer.
             return Response.ok().build();

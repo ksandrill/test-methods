@@ -1,10 +1,11 @@
 package org.nsu.fit.tm_backend.manager;
 
+import lombok.var;
 import org.slf4j.Logger;
 import org.nsu.fit.tm_backend.repository.IRepository;
 import org.nsu.fit.tm_backend.repository.data.ContactPojo;
 import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
-import org.nsu.fit.tm_backend.repository.data.TopUpBalancePojo;
+import org.nsu.fit.tm_backend.controller.data.TopUpBalanceRequest;
 import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
 import org.nsu.fit.tm_backend.shared.Globals;
 
@@ -86,12 +87,12 @@ public class CustomerManager extends ParentManager {
     }
 
     /**
-     * Метод добавляет к текущему баласу переданное значение, которое должно быть строго больше нуля.
+     * Метод добавляет к текущему балансу переданное значение, которое должно быть строго больше нуля.
      */
-    public CustomerPojo topUpBalance(TopUpBalancePojo topUpBalancePojo) {
-        CustomerPojo customerPojo = dbService.getCustomer(topUpBalancePojo.customerId);
+    public CustomerPojo topUpBalance(UUID customerId, Integer money) {
+        var customerPojo = dbService.getCustomer(customerId);
 
-        customerPojo.balance += topUpBalancePojo.money;
+        customerPojo.balance += money;
 
         dbService.editCustomer(customerPojo);
 

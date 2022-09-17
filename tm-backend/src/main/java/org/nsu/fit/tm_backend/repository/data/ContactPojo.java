@@ -3,22 +3,15 @@ package org.nsu.fit.tm_backend.repository.data;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-
-@MappedSuperclass
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContactPojo {
     @JsonProperty("first_name")
-    @Column(name = "first_name")
     public String firstName;
 
     @JsonProperty("last_name")
-    @Column(name = "last_name")
     public String lastName;
 
     @JsonProperty("login")
-    @Column(name = "login")
     public String login;
 
     /**
@@ -26,11 +19,9 @@ public class ContactPojo {
      * в открытом виде, почему это плохо, как можно исправить.
      */
     @JsonProperty("pass")
-    @Column(name = "pass")
     public String pass;
 
     @JsonProperty("balance")
-    @Column(name = "balance")
     public int balance;
 
     public String getFirstName() {
