@@ -1,34 +1,36 @@
 package org.nsu.fit.tm_backend.repository.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
-import org.nsu.fit.tm_backend.repository.IRepository;
-import org.slf4j.Logger;
-import org.nsu.fit.tm_backend.repository.data.AccountTokenPojo;
+import org.nsu.fit.tm_backend.repository.Repository;
 import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
 import org.nsu.fit.tm_backend.repository.data.PlanPojo;
 import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
-import org.nsu.fit.tm_backend.manager.auth.exception.AccessDeniedException;
+import org.nsu.fit.tm_backend.service.data.AccountTokenBO;
+import org.nsu.fit.tm_backend.service.impl.auth.exception.AccessDeniedException;
 import org.nsu.fit.tm_backend.shared.JsonMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-public class MemoryRepository implements IRepository {
-    private final Logger logger;
+@Singleton
+@Slf4j
+public class MemoryRepository implements Repository {
     private static final Object generalMutex = new Object();
 
-    private final Map<String, AccountTokenPojo> accountTokens;
+    private final Map<String, AccountTokenBO> accountTokens;
     private final Map<UUID, CustomerPojo> customers;
     private final Map<UUID, PlanPojo> plans;
     private final Map<UUID, SubscriptionPojo> subscriptions;
 
-    public MemoryRepository(Logger logger) {
-        this.logger = logger;
+    public MemoryRepository() {
         this.accountTokens = new LinkedHashMap<>();
         this.customers = new LinkedHashMap<>();
         this.plans = new LinkedHashMap<>();
@@ -36,20 +38,22 @@ public class MemoryRepository implements IRepository {
     }
 
     @Override
-    public AccountTokenPojo createAccountToken(AccountTokenPojo accountTokenPojo) {
+    public AccountTokenBO createAccountToken(AccountTokenBO accountToken) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'createAccountToken' was called with data: \n%s", JsonMapper.toJson(accountTokenPojo, true)));
+            log.debug(String.format(
+                "Method 'createAccountToken' was called with data: %s",
+                accountToken));
 
-            accountTokens.put(accountTokenPojo.token, accountTokenPojo);
+            accountTokens.put(accountToken.getToken(), accountToken);
 
-            return accountTokenPojo;
+            return accountToken;
         }
     }
 
     @Override
     public void checkAccountToken(String authenticationToken) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'checkAccountToken' was called with data: \n%s", authenticationToken));
+            log.debug(String.format("Method 'checkAccountToken' was called with data: \n%s", authenticationToken));
 
             if (!accountTokens.containsKey(authenticationToken)) {
                 throw new AccessDeniedException("Access Denied!");
@@ -59,7 +63,9 @@ public class MemoryRepository implements IRepository {
 
     public CustomerPojo createCustomer(CustomerPojo customerData) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'createCustomer' was called with data: \n%s", JsonMapper.toJson(customerData, true)));
+            log.debug(String.format(
+                "Method 'createCustomer' was called with data: %s",
+                customerData));
 
             customerData.id = UUID.randomUUID();
 
@@ -71,7 +77,7 @@ public class MemoryRepository implements IRepository {
 
     public void editCustomer(CustomerPojo customerPojo) {
         synchronized (generalMutex) {
-            logger.debug("Method 'editCustomer' was called with data: \n{}", JsonMapper.toJson(customerPojo, true));
+            log.debug("Method 'editCustomer' was called with data: \n{}", JsonMapper.toJson(customerPojo, true));
 
             customers.put(customerPojo.id, customerPojo);
         }
@@ -80,23 +86,23 @@ public class MemoryRepository implements IRepository {
     @Override
     public void deleteCustomer(UUID id) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'removeCustomer' was called with data: \n%s", id));
+            log.debug(String.format("Method 'removeCustomer' was called with data: \n%s", id));
 
             customers.remove(id);
         }
     }
 
-    public List<CustomerPojo> getCustomers() {
+    public Set<CustomerPojo> getCustomers() {
         synchronized (generalMutex) {
-            logger.debug("Method 'getCustomers' was called.");
+            log.debug("Method 'getCustomers' was called.");
 
-            return new ArrayList<>(customers.values());
+            return new LinkedHashSet<>(customers.values());
         }
     }
 
     public CustomerPojo getCustomer(UUID id) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'getCustomer' was called with data '%s'.", id));
+            log.debug(String.format("Method 'getCustomer' was called with data '%s'.", id));
 
             return customers.get(id);
         }
@@ -104,7 +110,7 @@ public class MemoryRepository implements IRepository {
 
     public CustomerPojo getCustomerByLogin(String customerLogin) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'lookupCustomerByLogin' was called with data '%s'.", customerLogin));
+            log.debug(String.format("Method 'lookupCustomerByLogin' was called with data '%s'.", customerLogin));
 
             for (var customer : customers.values()) {
                 if (customer.login.equals(customerLogin)) {
@@ -117,7 +123,7 @@ public class MemoryRepository implements IRepository {
 
     public PlanPojo createPlan(PlanPojo plan) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'createPlan' was called with data '%s'.", plan));
+            log.debug(String.format("Method 'createPlan' was called with data '%s'.", plan));
 
             plan.id = UUID.randomUUID();
 
@@ -130,7 +136,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public void deletePlan(UUID id) {
         synchronized (generalMutex) {
-            logger.debug(String.format("Method 'deletePlan' was called with data: \n%s", id));
+            log.debug(String.format("Method 'deletePlan' was called with data: \n%s", id));
 
             plans.remove(id);
         }
@@ -139,7 +145,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public List<PlanPojo> getPlans() {
         synchronized (generalMutex) {
-            logger.debug("Method 'getPlans' was called.");
+            log.debug("Method 'getPlans' was called.");
 
             return new ArrayList<>(plans.values());
         }
@@ -148,7 +154,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public SubscriptionPojo createSubscription(SubscriptionPojo subscriptionPojo) {
         synchronized (generalMutex) {
-            logger.debug("Method 'createSubscription' was called with data '{}'.", subscriptionPojo);
+            log.debug("Method 'createSubscription' was called with data '{}'.", subscriptionPojo);
 
             subscriptionPojo.id = UUID.randomUUID();
 
@@ -161,7 +167,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public void deleteSubscription(UUID id) {
         synchronized (generalMutex) {
-            logger.debug("Method 'deleteSubscription' was called with data: \n{}", id);
+            log.debug("Method 'deleteSubscription' was called with data: \n{}", id);
 
             subscriptions.remove(id);
         }
@@ -170,7 +176,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public List<SubscriptionPojo> getSubscriptions() {
         synchronized (generalMutex) {
-            logger.debug("Method 'getSubscriptions' was called.");
+            log.debug("Method 'getSubscriptions' was called.");
 
             return new ArrayList<>(subscriptions.values());
         }
@@ -179,7 +185,7 @@ public class MemoryRepository implements IRepository {
     @Override
     public List<SubscriptionPojo> getSubscriptions(UUID customerId) {
         synchronized (generalMutex) {
-            logger.debug("Method 'getSubscriptions' was called.");
+            log.debug("Method 'getSubscriptions' was called.");
 
             return subscriptions.values().stream()
                 .filter(subscription -> Objects.equals(customerId, subscription.customerId))

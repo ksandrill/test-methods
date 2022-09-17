@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HealthCheckResponse {
-    @JsonProperty("status")
-    private String status;
+public class CredentialsRequest {
+    @JsonProperty("login")
+    private String login;
 
-    @JsonProperty("db_status")
-    private String dbStatus;
+    @JsonProperty("pass")
+    private String pass;
 }

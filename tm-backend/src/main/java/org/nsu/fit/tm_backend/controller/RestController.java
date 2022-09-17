@@ -1,18 +1,22 @@
 package org.nsu.fit.tm_backend.controller;
 
+import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.nsu.fit.tm_backend.MainFactory;
 import org.nsu.fit.tm_backend.repository.data.ContactPojo;
-import org.nsu.fit.tm_backend.repository.data.CredentialsPojo;
+import org.nsu.fit.tm_backend.controller.data.CredentialsRequest;
 import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
 import org.nsu.fit.tm_backend.controller.data.HealthCheckResponse;
 import org.nsu.fit.tm_backend.repository.data.PlanPojo;
 import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
 import org.nsu.fit.tm_backend.controller.data.TopUpBalanceRequest;
-import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
+import org.nsu.fit.tm_backend.service.AuthenticationTokenService;
+import org.nsu.fit.tm_backend.service.CustomerService;
+import org.nsu.fit.tm_backend.service.PlanService;
+import org.nsu.fit.tm_backend.service.SubscriptionService;
+import org.nsu.fit.tm_backend.service.impl.auth.data.AuthenticatedUserDetails;
 import org.nsu.fit.tm_backend.shared.Authority;
 import org.nsu.fit.tm_backend.shared.JsonMapper;
 
@@ -38,15 +42,28 @@ import java.util.stream.Collectors;
 @Path("")
 @Slf4j
 public class RestController {
+    @Inject
+    private AuthenticationTokenService authenticationTokenService;
+
+    @Inject
+    private CustomerService customerService;
+
+    @Inject
+    private SubscriptionService subscriptionService;
+
+    @Inject
+    private PlanService planService;
+
     @POST
     @Path("/authenticate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
-    public Response authenticate(CredentialsPojo credentialsData) {
-        return Response.ok().entity(JsonMapper.toJson(
-                MainFactory.getInstance().getAuthenticationTokenManager().authenticate(credentialsData),
-                true)).build();
+    public Response authenticate(CredentialsRequest credentials) {
+        var result = authenticationTokenService
+            .authenticate(credentials.getLogin(), credentials.getPass());
+
+        return Response.ok().entity(result).build();
     }
 
     @GET
@@ -69,9 +86,7 @@ public class RestController {
         try {
             AuthenticatedUserDetails authenticatedUserDetails = (AuthenticatedUserDetails)securityContext.getUserPrincipal();
 
-            ContactPojo contactPojo = MainFactory.getInstance()
-                    .getCustomerManager()
-                    .me(authenticatedUserDetails);
+            ContactPojo contactPojo = customerService.me(authenticatedUserDetails);
 
             return Response.ok().entity(JsonMapper.toJson(contactPojo, true)).build();
         } catch (IllegalArgumentException ex) {
@@ -94,8 +109,7 @@ public class RestController {
 
             String login = customerLogin;
 
-            List<CustomerPojo> customers = MainFactory.getInstance()
-                    .getCustomerManager()
+            List<CustomerPojo> customers = customerService
                     .getCustomers().stream()
                     .filter(x -> login.isEmpty() || x.login.equals(login))
                     .collect(Collectors.toList());
@@ -114,7 +128,7 @@ public class RestController {
     public Response createCustomer(CustomerPojo customerData) {
         try {
             // create new customer
-            CustomerPojo customer = MainFactory.getInstance().getCustomerManager().createCustomer(customerData);
+            CustomerPojo customer = customerService.createCustomer(customerData);
 
             // send the answer
             return Response.ok().entity(JsonMapper.toJson(customer, true)).build();
@@ -131,7 +145,7 @@ public class RestController {
     @RolesAllowed(Authority.ADMIN_ROLE)
     public Response deleteCustomer(@PathParam("id") UUID customerId) {
         try {
-            MainFactory.getInstance().getCustomerManager().deleteCustomer(customerId);
+            customerService.deleteCustomer(customerId);
 
             // send the answer
             return Response.ok().build();
@@ -150,7 +164,7 @@ public class RestController {
             AuthenticatedUserDetails authenticatedUserDetails = (AuthenticatedUserDetails)securityContext.getUserPrincipal();
 
             var customerId = UUID.fromString(authenticatedUserDetails.getUserId());
-            MainFactory.getInstance().getCustomerManager().topUpBalance(customerId, topUpBalanceRequest.getMoney());
+            customerService.topUpBalance(customerId, topUpBalanceRequest.getMoney());
 
             // send the answer.
             return Response.ok().build();
@@ -170,9 +184,7 @@ public class RestController {
                 customerId = UUID.fromString(customerIdStr);
             }
 
-            List<PlanPojo> plans = MainFactory.getInstance()
-                    .getPlanManager()
-                    .getPlans(customerId);
+            List<PlanPojo> plans = planService.getPlans(customerId);
 
             return Response.ok().entity(JsonMapper.toJson(plans, true)).build();
         } catch (IllegalArgumentException ex) {
@@ -188,8 +200,7 @@ public class RestController {
         try {
             AuthenticatedUserDetails authenticatedUserDetails = (AuthenticatedUserDetails)securityContext.getUserPrincipal();
 
-            List<PlanPojo> plans = MainFactory.getInstance()
-                    .getPlanManager()
+            List<PlanPojo> plans = planService
                     .getPlans(UUID.fromString(authenticatedUserDetails.getUserId()));
 
             return Response.ok().entity(JsonMapper.toJson(plans, true)).build();
@@ -209,7 +220,7 @@ public class RestController {
             PlanPojo planData = JsonMapper.fromJson(planDataJson, PlanPojo.class);
 
             // create new customer
-            PlanPojo plan = MainFactory.getInstance().getPlanManager().createPlan(planData);
+            PlanPojo plan = planService.createPlan(planData);
 
             // send the answer
             return Response.ok().entity(JsonMapper.toJson(plan, true)).build();
@@ -225,7 +236,7 @@ public class RestController {
     @RolesAllowed(Authority.ADMIN_ROLE)
     public Response deletePlan(@PathParam("id") String planId) {
         try {
-            MainFactory.getInstance().getPlanManager().deletePlan(UUID.fromString(planId));
+            planService.deletePlan(UUID.fromString(planId));
 
             // send the answer
             return Response.ok().build();
@@ -248,7 +259,7 @@ public class RestController {
 
             // create new subscription.
             subscriptionPojo.customerId = UUID.fromString(authenticatedUserDetails.getUserId());
-            subscriptionPojo = MainFactory.getInstance().getSubscriptionManager().createSubscription(subscriptionPojo);
+            subscriptionPojo = subscriptionService.createSubscription(subscriptionPojo);
 
             // send the answer.
             return Response.ok().entity(JsonMapper.toJson(subscriptionPojo, true)).build();
@@ -264,7 +275,7 @@ public class RestController {
     @RolesAllowed(Authority.CUSTOMER_ROLE)
     public Response deleteSubscription(@PathParam("id") String subscriptionId) {
         try {
-            MainFactory.getInstance().getSubscriptionManager().deleteSubscription(UUID.fromString(subscriptionId));
+            subscriptionService.deleteSubscription(UUID.fromString(subscriptionId));
             return Response.ok().build();
         } catch (IllegalArgumentException ex) {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(ex)).build();
@@ -282,8 +293,7 @@ public class RestController {
                 customerId = UUID.fromString(customerIdStr);
             }
 
-            List<SubscriptionPojo> subscriptions = MainFactory.getInstance()
-                    .getSubscriptionManager()
+            List<SubscriptionPojo> subscriptions = subscriptionService
                     .getSubscriptions(customerId);
 
             return Response.ok().entity(JsonMapper.toJson(subscriptions, true)).build();
@@ -300,8 +310,7 @@ public class RestController {
         try {
             AuthenticatedUserDetails authenticatedUserDetails = (AuthenticatedUserDetails)securityContext.getUserPrincipal();
 
-            List<SubscriptionPojo> subscriptions = MainFactory.getInstance()
-                    .getSubscriptionManager()
+            List<SubscriptionPojo> subscriptions = subscriptionService
                     .getSubscriptions(UUID.fromString(authenticatedUserDetails.getUserId()));
 
             return Response.ok().entity(JsonMapper.toJson(subscriptions, true)).build();

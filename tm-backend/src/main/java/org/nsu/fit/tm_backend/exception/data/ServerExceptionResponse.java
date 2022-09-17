@@ -15,9 +15,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServerExceptionResponse {
+    @JsonProperty("status")
+    private Integer status;
+
     @JsonProperty("message")
     private String message;
 
     @JsonProperty("details")
     private String details;
+
+    @JsonProperty("path")
+    private String path;
 }

@@ -1,9 +1,10 @@
 package org.nsu.fit.tm_backend.config;
 
-import org.nsu.fit.tm_backend.MainFactory;
-import org.nsu.fit.tm_backend.manager.auth.data.AuthenticatedUserDetails;
-import org.nsu.fit.tm_backend.manager.auth.data.AuthenticationTokenDetails;
-import org.nsu.fit.tm_backend.manager.auth.data.TokenBasedSecurityContext;
+import javax.inject.Inject;
+import org.nsu.fit.tm_backend.service.AuthenticationTokenService;
+import org.nsu.fit.tm_backend.service.impl.auth.data.AuthenticatedUserDetails;
+import org.nsu.fit.tm_backend.service.impl.auth.data.AuthenticationTokenDetails;
+import org.nsu.fit.tm_backend.service.impl.auth.data.TokenBasedSecurityContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,8 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
-    private Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+    @Inject
+    private AuthenticationTokenService authenticationTokenService;
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -38,10 +40,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
     private void handleTokenBasedAuthentication(String authenticationToken, ContainerRequestContext requestContext) {
         AuthenticationTokenDetails authenticationTokenDetails
-                = MainFactory.getInstance().getAuthenticationTokenManager().lookupAuthenticationTokenDetails(authenticationToken);
+                = authenticationTokenService.lookupAuthenticationTokenDetails(authenticationToken);
 
         AuthenticatedUserDetails authenticatedUserDetails
-                = MainFactory.getInstance().getAuthenticationTokenManager().lookupAuthenticatedUserDetails(authenticationTokenDetails);
+                = authenticationTokenService.lookupAuthenticatedUserDetails(authenticationTokenDetails);
 
         boolean isSecure = requestContext.getSecurityContext().isSecure();
         SecurityContext securityContext = new TokenBasedSecurityContext(authenticatedUserDetails, authenticationTokenDetails, isSecure);
