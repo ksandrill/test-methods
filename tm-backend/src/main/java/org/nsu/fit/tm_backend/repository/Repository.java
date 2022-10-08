@@ -17,6 +17,8 @@ public interface Repository {
 
     Set<CustomerPojo> getCustomers();
 
+    Set<UUID> getCustomerIds();
+
     CustomerPojo getCustomer(UUID id);
 
     CustomerPojo getCustomerByLogin(String customerLogin);

@@ -1,27 +1,11 @@
 package org.nsu.fit.tm_backend.controller;
 
-import javax.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
-import lombok.var;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.nsu.fit.tm_backend.repository.data.ContactPojo;
-import org.nsu.fit.tm_backend.controller.data.CredentialsRequest;
-import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
-import org.nsu.fit.tm_backend.controller.data.HealthCheckResponse;
-import org.nsu.fit.tm_backend.repository.data.PlanPojo;
-import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
-import org.nsu.fit.tm_backend.controller.data.TopUpBalanceRequest;
-import org.nsu.fit.tm_backend.service.AuthenticationTokenService;
-import org.nsu.fit.tm_backend.service.CustomerService;
-import org.nsu.fit.tm_backend.service.PlanService;
-import org.nsu.fit.tm_backend.service.SubscriptionService;
-import org.nsu.fit.tm_backend.service.impl.auth.data.AuthenticatedUserDetails;
-import org.nsu.fit.tm_backend.shared.Authority;
-import org.nsu.fit.tm_backend.shared.JsonMapper;
-
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -35,9 +19,26 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import lombok.var;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.nsu.fit.tm_backend.controller.data.CredentialsRequest;
+import org.nsu.fit.tm_backend.controller.data.HealthCheckResponse;
+import org.nsu.fit.tm_backend.controller.data.TopUpBalanceRequest;
+import org.nsu.fit.tm_backend.mapper.StatisticMapper;
+import org.nsu.fit.tm_backend.repository.data.ContactPojo;
+import org.nsu.fit.tm_backend.repository.data.CustomerPojo;
+import org.nsu.fit.tm_backend.repository.data.PlanPojo;
+import org.nsu.fit.tm_backend.repository.data.SubscriptionPojo;
+import org.nsu.fit.tm_backend.service.AuthenticationTokenService;
+import org.nsu.fit.tm_backend.service.CustomerService;
+import org.nsu.fit.tm_backend.service.PlanService;
+import org.nsu.fit.tm_backend.service.StatisticService;
+import org.nsu.fit.tm_backend.service.SubscriptionService;
+import org.nsu.fit.tm_backend.service.impl.auth.data.AuthenticatedUserDetails;
+import org.nsu.fit.tm_backend.shared.Authority;
+import org.nsu.fit.tm_backend.shared.JsonMapper;
 
 @Path("")
 @Slf4j
@@ -53,6 +54,9 @@ public class RestController {
 
     @Inject
     private PlanService planService;
+
+    @Inject
+    private StatisticService statisticService;
 
     @POST
     @Path("/authenticate")
@@ -317,5 +321,14 @@ public class RestController {
         } catch (IllegalArgumentException ex) {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage() + "\n" + ExceptionUtils.getFullStackTrace(ex)).build();
         }
+    }
+
+    @GET
+    @Path("/statistic")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(Authority.CUSTOMER_ROLE)
+    public Response getStatistic(@Context SecurityContext securityContext) {
+        var result = statisticService.calculate();
+        return Response.ok().entity(StatisticMapper.INSTANCE.toStatisticResponse(result)).build();
     }
 }

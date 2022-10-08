@@ -1,6 +1,7 @@
 package org.nsu.fit.tm_backend.repository.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -97,6 +98,14 @@ public class MemoryRepository implements Repository {
             log.debug("Method 'getCustomers' was called.");
 
             return new LinkedHashSet<>(customers.values());
+        }
+    }
+
+    public Set<UUID> getCustomerIds() {
+        synchronized (generalMutex) {
+            log.debug("Method 'getCustomerIds' was called.");
+
+            return new HashSet<>(customers.keySet());
         }
     }
 

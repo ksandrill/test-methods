@@ -16,9 +16,11 @@ import org.nsu.fit.tm_backend.repository.impl.MemoryRepository;
 import org.nsu.fit.tm_backend.service.AuthenticationTokenService;
 import org.nsu.fit.tm_backend.service.CustomerService;
 import org.nsu.fit.tm_backend.service.PlanService;
+import org.nsu.fit.tm_backend.service.StatisticService;
 import org.nsu.fit.tm_backend.service.SubscriptionService;
 import org.nsu.fit.tm_backend.service.impl.CustomerServiceImpl;
 import org.nsu.fit.tm_backend.service.impl.PlanServiceImpl;
+import org.nsu.fit.tm_backend.service.impl.StatisticServiceImpl;
 import org.nsu.fit.tm_backend.service.impl.SubscriptionServiceImpl;
 import org.nsu.fit.tm_backend.service.impl.auth.AuthenticationTokenServiceImpl;
 
@@ -41,6 +43,7 @@ public class CustomApplication extends ResourceConfig {
                 bind(CustomerServiceImpl.class).to(CustomerService.class);
                 bind(SubscriptionServiceImpl.class).to(SubscriptionService.class);
                 bind(PlanServiceImpl.class).to(PlanService.class);
+                bind(StatisticServiceImpl.class).to(StatisticService.class);
             }
         });
 

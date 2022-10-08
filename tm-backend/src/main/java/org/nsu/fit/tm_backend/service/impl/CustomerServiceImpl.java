@@ -3,7 +3,6 @@ package org.nsu.fit.tm_backend.service.impl;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
-import javax.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.jvnet.hk2.annotations.Service;
@@ -59,9 +58,19 @@ public class CustomerServiceImpl implements CustomerService {
         return repository.getCustomers();
     }
 
+    public Set<UUID> getCustomerIds() {
+        return repository.getCustomerIds();
+    }
+
     public CustomerPojo getCustomer(UUID customerId) {
         return repository.getCustomer(customerId);
     }
+
+    public CustomerPojo lookupCustomer(UUID customerId) {
+        return repository.getCustomers().stream()
+            .filter(x -> x.id.equals(customerId))
+            .findFirst()
+            .orElse(null);}
 
     public CustomerPojo lookupCustomer(String login) {
         return repository.getCustomers().stream()
@@ -79,7 +88,7 @@ public class CustomerServiceImpl implements CustomerService {
             return contactPojo;
         }
 
-        // Лабораторная 2: обратите внимание что вернули данных больше чем надо...
+        // Лабораторная 2: обратите внимание, что вернули данных больше чем надо...
         // т.е. getCustomerByLogin честно возвратит все что есть в базе данных по этому customer'у.
         // необходимо написать такой unit тест, который бы отлавливал данное поведение.
         return repository.getCustomerByLogin(authenticatedUserDetails.getName());
@@ -93,12 +102,12 @@ public class CustomerServiceImpl implements CustomerService {
      * Метод добавляет к текущему балансу переданное значение, которое должно быть строго больше нуля.
      */
     public CustomerPojo topUpBalance(UUID customerId, Integer money) {
-        var customerPojo = repository.getCustomer(customerId);
+        var customer = getCustomer(customerId);
 
-        customerPojo.balance += money;
+        customer.balance += money;
 
-        repository.editCustomer(customerPojo);
+        repository.editCustomer(customer);
 
-        return customerPojo;
+        return customer;
     }
 }

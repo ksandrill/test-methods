@@ -22,7 +22,11 @@ public interface CustomerService {
 
     Set<CustomerPojo> getCustomers();
 
+    Set<UUID> getCustomerIds();
+
     CustomerPojo getCustomer(UUID customerId);
+
+    CustomerPojo lookupCustomer(UUID customerId);
 
     CustomerPojo lookupCustomer(String login);
 
