@@ -3,6 +3,7 @@ package org.nsu.fit.tm_backend.service.impl;
 import java.util.Set;
 import java.util.UUID;
 import javax.inject.Inject;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.jvnet.hk2.annotations.Service;
@@ -45,8 +46,18 @@ public class CustomerServiceImpl implements CustomerService {
             throw new IllegalArgumentException("Password is very easy.");
         }
 
+
         // Лабораторная 2: добавить код который бы проверял, что нет customer'а c таким же login (email'ом).
         // Попробовать добавить другие ограничения, посмотреть как быстро растет кодовая база тестов.
+
+        if (lookupCustomer(customer.login) != null) {
+            throw new IllegalArgumentException("User with provided login already exists.");
+        }
+
+        if (!customer.firstName.matches("[A-Z][a-z]+")) {
+            throw new IllegalArgumentException("First name format is invalid.");
+        }
+
 
         return repository.createCustomer(customer);
     }
@@ -68,9 +79,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     public CustomerPojo lookupCustomer(UUID customerId) {
         return repository.getCustomers().stream()
-            .filter(x -> x.id.equals(customerId))
-            .findFirst()
-            .orElse(null);}
+                .filter(x -> x.id.equals(customerId))
+                .findFirst()
+                .orElse(null);
+    }
 
     public CustomerPojo lookupCustomer(String login) {
         return repository.getCustomers().stream()
