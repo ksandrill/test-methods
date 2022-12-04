@@ -3,16 +3,14 @@ package org.nsu.fit.services.rest;
 import com.github.javafaker.Faker;
 import org.glassfish.jersey.client.ClientConfig;
 import org.nsu.fit.services.log.Logger;
-import org.nsu.fit.services.rest.data.AccountTokenPojo;
-import org.nsu.fit.services.rest.data.ContactPojo;
-import org.nsu.fit.services.rest.data.CredentialsPojo;
-import org.nsu.fit.services.rest.data.CustomerPojo;
+import org.nsu.fit.services.rest.data.*;
 import org.nsu.fit.shared.JsonMapper;
 
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RestClient {
     // Note: change url if you want to use the docker compose.
@@ -161,8 +159,30 @@ public class RestClient {
         return get("me", "", ContactPojo.class, accountToken, null);
     }
 
-    public CustomerPojo meCustomer(AccountTokenPojo accountToken){
+    public CustomerPojo meCustomer(AccountTokenPojo accountToken) {
         return get("me", "", CustomerPojo.class, accountToken, null);
+    }
+
+    public CustomerPojo createCustomer(CustomerPojo customerPojo, AccountTokenPojo adminToken) {
+        return post("customers", JsonMapper.toJson(customerPojo, true), CustomerPojo.class, adminToken);
+    }
+
+
+    public List<CustomerPojo> getCustomers(AccountTokenPojo adminToken, String customerLogin) {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("login", customerLogin);
+
+        return Arrays.stream(
+                Objects.requireNonNull(
+                        get("customers", "", CustomerPojo[].class, adminToken, queryParams)
+                )
+        ).collect(
+                Collectors.toList()
+        );
+    }
+
+    public void topUpBalance(AccountTokenPojo accountTokenPojo, TopUpBalanceRequest topUpBalanceRequest) {
+        post("customers/top_up_balance", JsonMapper.toJson(topUpBalanceRequest, true), void.class, accountTokenPojo);
     }
 
 
