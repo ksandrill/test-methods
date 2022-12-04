@@ -57,6 +57,8 @@ dependencies {
 
     compile group:'org.seleniumhq.selenium', name: 'selenium-support', version: '3.11.0'
     compile group:'org.seleniumhq.selenium', name: 'selenium-java', version: '3.11.0'
+    compile group: 'com.github.javafaker', name: 'javafaker', version: '0.15'
+
 }
 
 def api_suite = project.hasProperty("api")
@@ -67,8 +69,6 @@ test {
     useTestNG() {
         dependsOn cleanTest
         useDefaultListeners = true
-
-        suites ""
 
         if (api_suite) {
             suites "./src/test/resources/testng-xml/api_suite.xml"
