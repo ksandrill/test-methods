@@ -18,7 +18,7 @@ public class ContactPojo {
      * Лабораторная *: здесь следует обратить внимание на хранение и передачу пароля
      * в открытом виде, почему это плохо, как можно исправить.
      */
-    @JsonProperty("password")
+    @JsonProperty("pass")
     public String pass;
 
     @JsonProperty("balance")
