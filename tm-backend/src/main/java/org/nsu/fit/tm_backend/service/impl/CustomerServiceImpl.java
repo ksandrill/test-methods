@@ -103,7 +103,14 @@ public class CustomerServiceImpl implements CustomerService {
         // Лабораторная 2: обратите внимание, что вернули данных больше чем надо...
         // т.е. getCustomerByLogin честно возвратит все что есть в базе данных по этому customer'у.
         // необходимо написать такой unit тест, который бы отлавливал данное поведение.
-        return repository.getCustomerByLogin(authenticatedUserDetails.getName());
+        CustomerPojo customer = repository.getCustomerByLogin(authenticatedUserDetails.getName());
+        if (customer == null) {
+            return null;
+        }
+
+        contactPojo.login = customer.login;
+
+        return contactPojo;
     }
 
     public void deleteCustomer(UUID id) {
