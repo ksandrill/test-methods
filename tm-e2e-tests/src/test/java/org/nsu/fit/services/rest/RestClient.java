@@ -185,6 +185,35 @@ public class RestClient {
         post("customers/top_up_balance", JsonMapper.toJson(topUpBalanceRequest, true), void.class, accountTokenPojo);
     }
 
+    public PlanPojo createPlan(PlanPojo planPojo, AccountTokenPojo accountToken) {
+        return post("plans", JsonMapper.toJson(planPojo, true), PlanPojo.class, accountToken);
+    }
+
+    public void deletePlan(PlanPojo planPojo, AccountTokenPojo accountToken) {
+        delete("plans/" + planPojo.id, "", void.class, accountToken);
+    }
+
+    public List<PlanPojo> getPlans(AccountTokenPojo adminToken, String customerLogin) {
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("name", customerLogin);
+
+        return Arrays.stream(
+                Objects.requireNonNull(
+                        get("plans", "", PlanPojo[].class, adminToken, queryParams)
+                )
+        ).collect(
+                Collectors.toList()
+        );
+    }
+
+    public List<PlanPojo> getAvailablePlans(String login) {
+        CredentialsPojo credentialsPojo = new CredentialsPojo();
+        credentialsPojo.login = login;
+        AccountTokenPojo customerToken = post("authenticate", JsonMapper.toJson(credentialsPojo, true), AccountTokenPojo.class, null);
+
+        return (Arrays.stream(Objects.requireNonNull(get("available_plans", "", PlanPojo[].class, customerToken, null))).collect(Collectors.toList()));
+    }
+
 
     private static class RestClientLogFilter implements ClientRequestFilter {
         @Override
