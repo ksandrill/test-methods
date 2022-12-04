@@ -12,9 +12,9 @@ public class AuthTest {
     private AccountTokenPojo adminToken;
 
     // Лабораторная 3: Разобраться с аннотациями, как они влияют на итоговый отчет.
-    @Test(description = "Authenticate as admin.")
-    @Severity(SeverityLevel.BLOCKER)
-    @Feature("Authentication feature.")
+    @Test(description = "Authenticate as admin.") /// тестовый метод
+    @Severity(SeverityLevel.BLOCKER) /// уровень критичности функционала, проверяемого автотестом
+    @Feature("Authentication feature.") /// группировка по фичам
     public void authAsAdminTest() {
         adminToken = new RestClient().authenticate("admin", "setup");
     }
