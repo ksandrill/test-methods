@@ -81,7 +81,7 @@ public class RestClient {
         return JsonMapper.fromJson(responseBody, responseType);
     }
 
-    public static <R> R get(String path, String body, Class<R> responseType, AccountTokenPojo accountToken, Map<String, String> queryParams) {
+    private static <R> R get(String path, String body, Class<R> responseType, AccountTokenPojo accountToken, Map<String, String> queryParams) {
         Logger.debug("Send GET request to " + path);
         Logger.debug("GET request body: " + body);
 
@@ -152,6 +152,19 @@ public class RestClient {
         Logger.debug("Response body: " + responseBody);
         return JsonMapper.fromJson(responseBody, responseType);
     }
+
+    public void deleteCustomer(CustomerPojo customerPojo, AccountTokenPojo adminToken) {
+        delete("customers/" + customerPojo.id, "", void.class, adminToken);
+    }
+
+    public ContactPojo meAdmin(AccountTokenPojo accountToken) {
+        return get("me", "", ContactPojo.class, accountToken, null);
+    }
+
+    public CustomerPojo meCustomer(AccountTokenPojo accountToken){
+        return get("me", "", CustomerPojo.class, accountToken, null);
+    }
+
 
     private static class RestClientLogFilter implements ClientRequestFilter {
         @Override

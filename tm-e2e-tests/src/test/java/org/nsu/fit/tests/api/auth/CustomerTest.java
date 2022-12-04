@@ -45,7 +45,7 @@ public class CustomerTest {
     @Severity(SeverityLevel.BLOCKER)
     @Feature("Authentication as customer feature")
     public void getMeAsCustomer() {
-        CustomerPojo result =  RestClient.get("me", "", CustomerPojo.class, customerToken, null);
+        CustomerPojo result = restClient.meCustomer(customerToken);
         assertNotNull(result);
         assertEquals(customerPojo.firstName, result.firstName);
         assertEquals(customerPojo.lastName, result.lastName);

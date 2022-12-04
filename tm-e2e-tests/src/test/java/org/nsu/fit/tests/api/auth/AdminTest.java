@@ -34,7 +34,7 @@ public class AdminTest {
     @Severity(SeverityLevel.BLOCKER)
     @Feature("Authentication as admin feature")
     public void meAsAdminTest() {
-        ContactPojo contactPojo = RestClient.get("me", "", ContactPojo.class, adminToken, null);
+        ContactPojo contactPojo = restClient.meAdmin(adminToken);
         assertNotNull(contactPojo);
         assertEquals("admin", contactPojo.login);
     }
