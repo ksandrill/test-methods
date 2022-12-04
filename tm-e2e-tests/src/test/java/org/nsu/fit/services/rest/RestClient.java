@@ -214,6 +214,28 @@ public class RestClient {
         return (Arrays.stream(Objects.requireNonNull(get("available_plans", "", PlanPojo[].class, customerToken, null))).collect(Collectors.toList()));
     }
 
+    public SubscriptionPojo createSubscription(SubscriptionPojo subscriptionPojo, AccountTokenPojo accountToken) {
+        return post("subscriptions", JsonMapper.toJson(subscriptionPojo, true), SubscriptionPojo.class, accountToken);
+    }
+
+    public void deleteSubscription(SubscriptionPojo subscriptionPojo, AccountTokenPojo accountToken) {
+        delete("subscriptions/" + subscriptionPojo.id, "", void.class, accountToken);
+    }
+
+    public List<SubscriptionPojo> getSubscriptions(String customerLogin, AccountTokenPojo adminToken){
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("login", customerLogin);
+
+        return Arrays.stream(
+                Objects.requireNonNull(
+                        get("subscriptions", "", SubscriptionPojo[].class, adminToken, queryParams)
+                )
+        ).collect(
+                Collectors.toList()
+        );
+
+    }
+
 
     private static class RestClientLogFilter implements ClientRequestFilter {
         @Override
