@@ -114,7 +114,14 @@ public class CustomerServiceImpl implements CustomerService {
      * Метод добавляет к текущему балансу переданное значение, которое должно быть строго больше нуля.
      */
     public CustomerPojo topUpBalance(UUID customerId, Integer money) {
+        if (money <= 0) {
+            throw new IllegalArgumentException("Money amount must be strictly positive.");
+        }
         var customer = getCustomer(customerId);
+
+        if (customer == null) {
+            return null;
+        }
 
         customer.balance += money;
 
