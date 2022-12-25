@@ -1,9 +1,13 @@
 package org.nsu.fit.services.log;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Attachment;
 import org.apache.log4j.Level;
 import org.apache.log4j.Priority;
 import org.apache.log4j.PropertyConfigurator;
+
+import java.io.IOException;
 
 public class Logger {
     private static final org.apache.log4j.Logger LOGGER;
@@ -57,6 +61,15 @@ public class Logger {
         attachMessage(
                 messageForAttachment.substring(0, Math.min(messageForAttachment.length(), 80)),
                 message);
+    }
+
+    public static <T> String toJson(T value) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        String json = mapper.writeValueAsString(value);
+
+        Object obj = mapper.readValue(json, Object.class);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
     }
 
     @Attachment(value = "{0}", type = "text/plain")

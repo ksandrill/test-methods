@@ -1,8 +1,35 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite verbose="1" name="API Tests" annotations="JDK" parallel="tests">
-    <test name="AuthTest">
+<suite verbose="1" name="API Tests" annotations="JDK" parallel="tests" thread-count="4">
+    <test name="AuthTest" parallel="classes" thread-count="4">
         <classes>
             <class name="org.nsu.fit.tests.api.AuthTest" />
+            <class name="org.nsu.fit.tests.api.auth.AdminTest"/>
+            <class name="org.nsu.fit.tests.api.auth.CustomerTest"/>
         </classes>
     </test>
+
+    <test name="CustomerTest" parallel="classes" thread-count="4">
+        <classes>
+            <class name="org.nsu.fit.tests.api.customer.CreateTest"/>
+            <class name="org.nsu.fit.tests.api.customer.DeleteTest"/>
+            <class name="org.nsu.fit.tests.api.customer.GetTest"/>
+            <class name="org.nsu.fit.tests.api.customer.TopUpBalanceTest"/>
+        </classes>
+    </test>
+
+    <test name="PlanTest" parallel="classes" thread-count="4">
+        <classes>
+            <class name="org.nsu.fit.tests.api.plan.CreateTest"/>
+            <class name="org.nsu.fit.tests.api.plan.DeleteTest"/>
+            <class name="org.nsu.fit.tests.api.plan.GetAvailableTest"/>
+        </classes>
+    </test>
+
+    <test name="SubscriptionTest" parallel="classes" thread-count="4">
+        <classes>
+            <class name="org.nsu.fit.tests.api.subscription.CreateTest"/>
+            <class name="org.nsu.fit.tests.api.subscription.DeleteTest"/>
+        </classes>
+    </test>
+
 </suite>

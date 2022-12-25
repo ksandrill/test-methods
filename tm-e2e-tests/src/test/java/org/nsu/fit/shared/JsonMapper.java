@@ -2,6 +2,7 @@ package org.nsu.fit.shared;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -12,6 +13,14 @@ public class JsonMapper {
     private static final JsonFactory jf = new JsonFactory();
 
     public static <T> T fromJson(String jsonAsString, Class<T> pojoClass) {
+        try {
+            return m.readValue(jsonAsString, pojoClass);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static <T> T fromJson(String jsonAsString, TypeReference<T> pojoClass) {
         try {
             return m.readValue(jsonAsString, pojoClass);
         } catch (IOException ex) {

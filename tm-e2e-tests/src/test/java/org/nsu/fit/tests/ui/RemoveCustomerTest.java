@@ -15,9 +15,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class CreateCustomerTest {
+public class RemoveCustomerTest {
     private Browser browser = null;
+    private ContactPojo contactPojo;
 
+    private AdminScreen adminScreen;
     @BeforeClass
     public void beforeClass() {
         browser = BrowserService.openNewBrowser();
@@ -27,13 +29,13 @@ public class CreateCustomerTest {
     @Severity(SeverityLevel.BLOCKER)
     @Feature("Create customer feature")
     public void createCustomer() {
-        ContactPojo contactPojo = new ContactPojo();
+        contactPojo = new ContactPojo();
         Faker faker = new Faker();
         contactPojo.firstName = faker.name().firstName();
         contactPojo.lastName = faker.name().lastName();
         contactPojo.login = faker.internet().emailAddress();
         contactPojo.pass = faker.internet().password(6, 12);
-        AdminScreen adminScreen = (AdminScreen) new LoginScreen(browser)
+        adminScreen = (AdminScreen) new LoginScreen(browser)
                 .loginAsAdmin()
                 .createCustomer()
                 .fillEmail(contactPojo.login)
@@ -41,15 +43,18 @@ public class CreateCustomerTest {
                 .fillFirstName(contactPojo.firstName)
                 .fillLastName(contactPojo.lastName)
                 .clickSubmit();
-        CustomerPojo customerPojo = adminScreen
-                .findCustomer(contactPojo.login);
+    }
 
-        // Лабораторная 4: Проверить что customer создан с ранее переданными полями.
-        // Решить проблему с генерацией случайных данных.
-        Assert.assertNotNull(customerPojo);
-        Assert.assertEquals(customerPojo.login, contactPojo.login);
-        Assert.assertEquals(customerPojo.firstName, contactPojo.firstName);
-        Assert.assertEquals(customerPojo.lastName, contactPojo.lastName);
+    @Test(description = "Remove customer via UI.", dependsOnMethods = "createCustomer")
+    @Severity(SeverityLevel.BLOCKER)
+    @Feature("Remove customer feature")
+    public void removeCustomer() {
+        CustomerPojo customerPojo = adminScreen
+                .makeFirstCustomer(contactPojo.login)
+                .deleteFirstCustomer()
+                .deleteFirstCustomerSave()
+                .findCustomer(contactPojo.login);
+        Assert.assertNull(customerPojo);
     }
 
     @AfterClass
